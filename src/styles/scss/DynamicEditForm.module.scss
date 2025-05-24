@@ -2,23 +2,24 @@
   max-width: 400px;
   margin: 3rem auto;
   padding: 2rem;
-  background: white;
+  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
 }
 
 .title {
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #222;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   text-align: center;
+  letter-spacing: 0.03em;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 1.5rem;
 }
 
 .field {
@@ -28,28 +29,34 @@
 
 .label {
   font-weight: 600;
-  margin-bottom: 0.5rem;
   color: #444;
+  margin-bottom: 0.5rem;
   font-size: 1rem;
 }
 
 .input {
   padding: 0.75rem 1rem;
-  border: 1.8px solid #ccc;
+  border: 1.5px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   outline: none;
 
   &:focus {
     border-color: #4f46e5;  // Indigo 600
     box-shadow: 0 0 8px rgba(79, 70, 229, 0.4);
   }
+
+  &:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+  }
 }
 
 .submitBtn {
-  background-color: #5f736e; // Indigo 600
-  color: white;
+  background-color: #5f736e;  // Indigo 600
+  color: #fff;
   padding: 0.75rem 0;
   border: none;
   border-radius: 8px;
@@ -58,7 +65,12 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 
-  &:hover {
-    background-color: #4338ca; // Indigo 700
+  &:hover:not(:disabled) {
+    background-color: #4338ca;  // Indigo 700
+  }
+
+  &:disabled {
+    background-color: #a5b4fc;
+    cursor: not-allowed;
   }
 }

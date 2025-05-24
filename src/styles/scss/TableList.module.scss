@@ -1,6 +1,6 @@
 .container {
-  max-width: 960px;
-  margin: 3.5rem auto;
+  max-width: 1200px;
+  margin: 4rem auto;
   padding: 1.5rem;
   background-color: #fff;
   border-radius: 12px;
@@ -22,40 +22,45 @@
 }
 
 .addButton {
-  background-color: #2563eb; // 파란색 (Tailwind blue-600)
+  background-color: #5f736e;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-weight: 600;
-  box-shadow: 0 4px 8px rgb(37 99 235 / 0.4);
+  box-shadow: 0 4px 8px rgba(37, 76, 161, 0.4);
   transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
 
   &:hover {
-    background-color: #1e40af; // Tailwind blue-800
+    background-color: #1e40af;
     box-shadow: 0 6px 12px rgb(30 64 175 / 0.6);
   }
 }
 
+.tableWrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 1rem;
+}
+
 .table {
   width: 100%;
+  min-width: 900px;
   border-collapse: separate;
-  border-spacing: 0 0.75rem; // 행 사이에 간격
-
-  thead tr {
-    background-color: #f3f4f6; // Tailwind gray-100
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
-  }
+  border-spacing: 0 0.75rem;
+  background-color: transparent;
 }
 
 .th, .thAction {
   padding: 0.75rem 1rem;
   text-align: left;
   font-weight: 600;
-  color: #374151; // Tailwind gray-700
+  color: #374151;
   user-select: none;
   border-bottom: 2px solid transparent;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .thAction {
@@ -70,7 +75,7 @@
   transition: background-color 0.25s ease;
 
   &:hover {
-    background-color: #e0e7ff; // Tailwind indigo-100
+    background-color: #e0e7ff;
   }
 }
 
@@ -78,8 +83,12 @@
   padding: 0.75rem 1rem;
   border-top: none;
   vertical-align: middle;
-  color: #4b5563; // Tailwind gray-600
+  color: #4b5563;
   font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
 }
 
 .tdActions {
@@ -97,6 +106,7 @@
   padding: 0;
   font-size: 0.95rem;
   transition: color 0.25s ease;
+  text-decoration: none;
 
   &:hover {
     text-decoration: underline;
@@ -108,13 +118,13 @@
 }
 
 .deleteBtn {
-  color: #dc2626; // Tailwind red-600
+  color: #dc2626;
 }
 
 .empty {
   padding: 2rem 0;
   text-align: center;
-  color: #9ca3af; // Tailwind gray-400
+  color: #9ca3af;
   font-style: italic;
   font-size: 1rem;
 }

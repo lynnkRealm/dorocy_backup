@@ -171,54 +171,63 @@ export default function TableListPage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>{table.replace(/_/g, " ").toUpperCase()} 목록</h1>
-        <Link href={`/${table}/new`} className={styles.addButton}>
-          + 새 항목 등록
-        </Link>
-      </div>
+  <div className={styles.header}>
+    <Link href={'/dashboard'}>
+    <h1 className={styles.title}>{table.replace(/_/g, " ").toUpperCase()} 목록</h1>
+    </Link>
+    <Link href={`/${table}/new`} className={styles.addButton}>
+      + 새 항목 등록
+    </Link>
+  </div>
 
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            {columns.map(({ key, label }) => (
-              <th key={key} className={styles.th}>
-                {label}
-              </th>
-            ))}
-            <th className={styles.thAction}>액션</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.length > 0 ? (
-            items.map((item) => (
-              <tr key={item[`${table}_id`]} className={styles.tr}>
-                {columns.map(({ key }) => (
-                  <td key={key} className={styles.td}>
-                    {["start_loc", "end_loc", "path_loc", "loc"].includes(key)
-                      ? parsePoint(String(item[key]))
-                      : String(item[key])}
-                  </td>
-                ))}
-                <td className={styles.tdActions}>
-                  <Link href={`/${table}/${item[`${table}_id`]}`} className={styles.editBtn}>
-                    수정
-                  </Link>
-                  <button onClick={() => handleDelete(item[`${table}_id`])} className={styles.deleteBtn}>
-                    삭제
-                  </button>
+  {/* 테이블 스크롤 감싸기 */}
+  <div className={styles.tableWrapper}>
+    <table className={styles.table}>
+      <thead>
+        <tr>
+          {columns.map(({ key, label }) => (
+            <th key={key} className={styles.th}>
+              {label}
+            </th>
+          ))}
+          <th className={styles.thAction}>액션</th>
+        </tr>
+      </thead>
+      <tbody>
+        {items.length > 0 ? (
+          items.map((item) => (
+            <tr key={item[`${table}_id`]} className={styles.tr}>
+              {columns.map(({ key }) => (
+                <td key={key} className={styles.td}>
+                  {["start_loc", "end_loc", "path_loc", "loc"].includes(key)
+                    ? parsePoint(String(item[key]))
+                    : String(item[key])}
                 </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={columns.length + 1} className={styles.empty}>
-                데이터가 없습니다.
+              ))}
+              <td className={styles.tdActions}>
+                <Link href={`/${table}/${item[`${table}_id`]}`} className={styles.editBtn}>
+                  수정
+                </Link>
+                <button
+                  onClick={() => handleDelete(item[`${table}_id`])}
+                  className={styles.deleteBtn}
+                >
+                  삭제
+                </button>
               </td>
             </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={columns.length + 1} className={styles.empty}>
+              데이터가 없습니다.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+
   )
 }

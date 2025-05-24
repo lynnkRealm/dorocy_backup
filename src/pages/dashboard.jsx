@@ -12,7 +12,7 @@ const tables = [
   { key: "admin", label: "Admin", icon: FaUserShield, color: "bg-indigo-100", textColor: "text-indigo-800" },
   { key: "outbreak", label: "Outbreak", icon: FaExclamationTriangle, color: "bg-orange-100", textColor: "text-orange-800" },
   { key: "caution", label: "Caution", icon: FaBell, color: "bg-teal-100", textColor: "text-teal-800" },
-  { key: "dangerous_incident", label: "Dangerous Incident", icon: FaSkullCrossbones, color: "bg-rose-100", textColor: "text-rose-800" },
+  { key: "dincident", label: "Dangerous Incident", icon: FaSkullCrossbones, color: "bg-rose-100", textColor: "text-rose-800" },
   { key: "vsl", label: "VSL", icon: FaCar, color: "bg-cyan-100", textColor: "text-cyan-800" },
   { key: "road_info", label: "Road Info", icon: FaInfoCircle, color: "bg-lime-100", textColor: "text-lime-800" },
 ];
