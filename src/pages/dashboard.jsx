@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from "next/link";
 import { FaUser, FaMapMarkerAlt, FaRoute, FaRoad, FaListAlt, FaClipboardList, FaUserShield, FaExclamationTriangle, FaBell, FaSkullCrossbones, FaCar, FaInfoCircle } from "react-icons/fa";
 import styles from "../styles/scss/Dashboard.module.scss";
+import { parseJwt } from '@/utils/jwt';
 
 const tables = [
   { key: "user", label: "User", icon: FaUser, color: "bg-blue-100", textColor: "text-blue-800" },
@@ -18,15 +20,37 @@ const tables = [
   { key: "road_info", label: "Road Info", icon: FaInfoCircle, color: "bg-lime-100", textColor: "text-lime-800" },
 ];
 
+const TABLES_BY_TYPE = {
+  ROAD: ['outbreak', 'vsl', 'dincident', 'caution', 'road_info'],
+  SERVICE: ['user', 'admin', 'road_section', 'navigation', 'path', 'guide'],
+  _ADMIN: ['user', 'admin'], // 필요하면 추가
+}
+
 export default function Dashboard() {
   const router = useRouter();
-  const { tables: tablesQuery } = router.query;
+  const [principalType, setPrincipalType] = useState(null);
 
-  // 쿼리에서 넘어온 tables 문자열 → 배열 변환 (없으면 빈 배열)
-  const allowedTables = tablesQuery ? tablesQuery.split(',') : [];
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.replace('/login');
+      return;
+    }
+    const payload = parseJwt(token);
+    if (!payload?.principal_type) {
+      router.replace('/login');
+      return;
+    }
+    setPrincipalType(payload.principal_type);
+  }, [router]);
 
-  // 전체 cards에서 허용된 것만 필터링
-  const filteredTables = tables.filter(t => allowedTables.includes(t.key));
+  if (!principalType) {
+    return <p>로딩 중...</p>;
+  }
+
+  // principal_type에 맞는 허용 테이블만 필터링
+  const allowedKeys = TABLES_BY_TYPE[principalType] || [];
+  const filteredTables = tables.filter(table => allowedKeys.includes(table.key));
 
   return (
     <div className={styles.dashboardContainer}>
