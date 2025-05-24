@@ -21,6 +21,13 @@
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 2rem;
+  
+    // 각 카드가 한 줄에 3개씩 나오도록 크기 지정
+  > a {  // Link 태그에 해당하는 카드가 a 태그라면 이렇게 선택자 지정
+    flex: 1 1 calc(33.333% - 1rem); // 3등분 - gap 보정
+    max-width: calc(33.333% - 1rem);
+    box-sizing: border-box;
+  }
 }
 
 .card {
