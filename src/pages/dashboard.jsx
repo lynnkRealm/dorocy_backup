@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import Link from "next/link";
 import { FaUser, FaMapMarkerAlt, FaRoute, FaRoad, FaListAlt, FaClipboardList, FaUserShield, FaExclamationTriangle, FaBell, FaSkullCrossbones, FaCar, FaInfoCircle } from "react-icons/fa";
 import styles from "../styles/scss/Dashboard.module.scss";
@@ -18,29 +19,40 @@ const tables = [
 ];
 
 export default function Dashboard() {
+  const router = useRouter();
+  const { tables: tablesQuery } = router.query;
+
+  // 쿼리에서 넘어온 tables 문자열 → 배열 변환 (없으면 빈 배열)
+  const allowedTables = tablesQuery ? tablesQuery.split(',') : [];
+
+  // 전체 cards에서 허용된 것만 필터링
+  const filteredTables = tables.filter(t => allowedTables.includes(t.key));
+
   return (
     <div className={styles.dashboardContainer}>
       <h1 className={styles.dashboardTitle}>관리자 대시보드</h1>
 
       <div className={styles.cardsWrapper}>
         <div className={styles.cardsContainer}>
-          {tables.map(({ key, label, icon: Icon, color, textColor }) => (
-            <Link
-              key={key}
-              href={`/${key}`}
-              className={`${styles.card} ${color} ${textColor}`}
-            >
-              <Icon className={styles.cardIcon} />
-              <div className={styles.cardLabel}>{label.replace(/_/g, " ")}</div>
-              <p className={styles.cardDesc}>
-                {`Manage the ${label.replace(/_/g, " ")}`}
-              </p>
-            </Link>
-          ))}
+          {filteredTables.length > 0 ? (
+            filteredTables.map(({ key, label, icon: Icon, color, textColor }) => (
+              <Link
+                key={key}
+                href={`/${key}`}
+                className={`${styles.card} ${color} ${textColor}`}
+              >
+                <Icon className={styles.cardIcon} />
+                <div className={styles.cardLabel}>{label.replace(/_/g, " ")}</div>
+                <p className={styles.cardDesc}>
+                  {`Manage the ${label.replace(/_/g, " ")}`}
+                </p>
+              </Link>
+            ))
+          ) : (
+            <p>접근 가능한 테이블이 없습니다.</p>
+          )}
         </div>
       </div>
     </div>
   );
 }
-
-

@@ -20,8 +20,8 @@ export default function Home() {
     }
 
     const payload = parseJwt(token)
-    console.log(payload)
     const principalType = payload?.principal_type
+    console.log(principalType)
 
     if (!principalType) {
       router.replace('/login')
