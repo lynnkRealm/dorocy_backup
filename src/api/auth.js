@@ -6,7 +6,7 @@ export const loginAdmin = async ({ id, pw }) => {
   return res.data
 }
 
-export const RegstUser = async ({id,pw,type }) => {
-    const res = await axiosInstance.post('/auth/register' , {id,pw,name,type})
+export const RegstUser = async ({email,password,name,utype }) => {
+    const res = await axiosInstance.post('/auth/register' , {email,password,name,utype})
     return res.data
 }

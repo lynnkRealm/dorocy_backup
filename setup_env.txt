@@ -1,0 +1,74 @@
+@echo off
+setlocal ENABLEDELAYEDEXPANSION
+chcp 65001 >nul
+
+cd /d %%~dp0
+
+for %%i in ("%%cd%%") do set "FULL_FOLDER=%%~ni"
+set "PROJECT=%%FULL_FOLDER:_front=%%"
+set "PROJECT=%%PROJECT:_backend=%%"
+set BACK_FOLDER=%%PROJECT%%_backend
+set FRONT_FOLDER=%%PROJECT%%_front
+
+echo [pwd] %%cd%%
+echo [*] [%%PROJECT%%] setup starting...
+
+:: venv 폴더가 있으면 Python 프로젝트로 판단 (If a venv folder exists, consider it a Python project)
+if exist venv (
+    echo [Python] Detected Python project.
+    call :install_python
+) else if exist package.json (
+    echo [Node.js] Detected Node.js project.
+    call :install_node
+) else (
+    echo [Error!] Unknown project type: No venv or package.json found.
+)
+
+echo [✔] Setup complete.
+pause
+exit /b
+
+:install_python
+echo [Python] Installing Python packages...
+
+:: 가상 환경이 없다면 생성 (If virtual environment doesn't exist, create one)
+if not exist .venv (
+    python -m venv .venv
+)
+
+:: 가상 환경 활성화 후 패키지 설치 (Activate virtual environment and install packages)
+if exist .venv\Scripts\activate (
+    call .venv\Scripts\activate
+    if exist requirements.txt (
+        pip install -r requirements.txt
+    ) else (
+        echo [Warning!] requirements.txt not found. Skipping Python package installation.
+    )
+) else (
+    echo [Warning!] .venv exists but activate script not found.
+)
+
+exit /b
+
+:install_node
+echo [Node.js] Installing Node packages...
+
+:: Node.js 패키지 설치 (Install Node.js packages)
+if exist requirements.txt (
+    for /f "delims=" %%i in (requirements.txt) do (
+        set "LINE=%%i"
+        
+        :: 주석 (#) 라인 건너뛰기 (Skip comment lines)
+        echo !LINE! | findstr /r "^#" >nul
+        if !errorlevel! == 0 (
+            rem skip
+        ) else (
+            echo Installing: %%i
+            npm install %%i
+        )
+    )
+) else (
+    echo [Warning!] requirements.txt not found in the frontend directory.
+)
+
+exit /b

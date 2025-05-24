@@ -8,40 +8,42 @@ export default function UserCreatePage() {
   const [email, setEmail] = useState('')
   const [utype,setutype] = useState('')
   const router = useRouter()
+  const now = new Date();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      // 👇 이렇게 하면 됨
-      // await crudRequest({
-      //   table: 'user',
-      //   action: 'create',
-      //   data: {
-      //       name,
-      //       email,
-      //       password: 'root',
-      //       type: 'USER'
-      //   }
-      //   })
-      await RegstUser({
+  e.preventDefault()
+  try {
+    const now = new Date().toISOString().replace('T', ' ').replace('Z', '')
+
+    await crudRequest({
+      table: 'admin',
+      action: 'create',
+      data: {
+        admin_type: utype,
         email,
-        password:"root",
+        password: 'root',
         name,
-        utype
-      })
+        profile_img: '',
+        created_at: now,
+        updated_at: now,
+      },
+    })
 
-      console.log('등록 성공:', { name, email })
-
-    router.push('/user')
-    
-    } catch (err) {
-      console.error('등록 실패:', err)
+    console.log('등록 성공:', { name, email })
+    router.push('/admin')
+  } catch (err) {
+    if (err.response) {
+      console.error('등록 실패:', err.response.data)
+    } else {
+      console.error('등록 실패:', err.message)
     }
   }
+}
+
 
   return (
     <form onSubmit={handleSubmit} className="p-6 space-y-4 max-w-md mx-auto">
-      <h2 className="text-xl font-bold">사용자 등록</h2>
+      <h2 className="text-xl font-bold">관리자 등록</h2>
       <input
         placeholder="이름"
         value={name}
@@ -55,7 +57,7 @@ export default function UserCreatePage() {
         className="border p-2 w-full"
       />
       <input
-        placeholder="유저 타입(ADMIN,USER 택1)"
+        placeholder="관리자 타입(ROAD,SERVICE 택1)"
         value={utype}
         onChange={(e) => setutype(e.target.value)}
         className="border p-2 w-full"
