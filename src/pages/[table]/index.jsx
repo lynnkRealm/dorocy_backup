@@ -2,6 +2,7 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { crudRequest } from "@/api/crud"
+import styles from "../../styles/scss/TableList.module.scss";
 
 const tableColumns = {
   user: [
@@ -21,6 +22,8 @@ const tableColumns = {
   ],
   navigation : [
     { key: "navigation_id", label: "Navigation ID" },
+    { key: "principal_id", label: "동적 id" },
+    { key: "principal_type", label: "동적 type" },
     { key: "start_loc", label: "출발지" },
     { key: "end_loc", label: "도착지" },
     { key: "road_option", label: "경로 옵션" },
@@ -69,6 +72,8 @@ const tableColumns = {
   outbreak: [
     { key: "outbreak_id", label: "ID" },
     { key: "navigation_id", label: "Navigation ID" },
+    { key: "principal_id", label: "동적 id" },
+    { key: "principal_type", label: "동적 type" },
     { key: "event_type", label: "이벤트 종류" },
     { key: "period", label: "기간" },
     { key: "road_name", label: "도로 이름" },
@@ -81,6 +86,8 @@ const tableColumns = {
   caution: [
   { key: "caution_id", label: "ID" },
   { key: "navigation_id", label: "Navigation ID" },
+  { key: "principal_id", label: "동적 id" },
+  { key: "principal_type", label: "동적 type" },
   { key: "message", label: "메시지" },
   { key: "loc", label: "위치 (LINESTRING)" },
   { key: "route_no", label: "루트 번호" },
@@ -91,6 +98,8 @@ const tableColumns = {
   dangerous_incident: [
   { key: "dincident_id", label: "ID" },
   { key: "navigation_id", label: "Navigation ID" },
+  { key: "principal_id", label: "동적 id" },
+  { key: "principal_type", label: "동적 type" },
   { key: "loc", label: "위치 (POINT)" },
   { key: "period", label: "기간" },
   { key: "updated_at", label: "업데이트 날짜" },
@@ -99,6 +108,8 @@ const tableColumns = {
   vsl: [
   { key: "vsl_id", label: "ID" },
   { key: "vsl_name", label: "VSL 이름" },
+  { key: "principal_id", label: "동적 id" },
+  { key: "principal_type", label: "동적 type" },
   { key: "loc", label: "위치 (POINT)" },
   { key: "road_no", label: "도로 번호" },
   { key: "default_speed_limit", label: "기본 속도 제한" },
@@ -159,50 +170,41 @@ export default function TableListPage() {
   const columns = tableColumns[table] || (items[0] ? Object.keys(items[0]).map((k) => ({ key: k, label: k })) : [])
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold">{table.replace(/_/g, " ").toUpperCase()} 목록</h1>
-        <Link
-          href={`/${table}/new`}
-          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
-        >
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>{table.replace(/_/g, " ").toUpperCase()} 목록</h1>
+        <Link href={`/${table}/new`} className={styles.addButton}>
           + 새 항목 등록
         </Link>
       </div>
 
-      <table className="w-full border-collapse border border-gray-300">
+      <table className={styles.table}>
         <thead>
-          <tr className="bg-gray-200">
+          <tr>
             {columns.map(({ key, label }) => (
-              <th key={key} className="border border-gray-300 p-2 text-left">
+              <th key={key} className={styles.th}>
                 {label}
               </th>
             ))}
-            <th className="border border-gray-300 p-2">액션</th>
+            <th className={styles.thAction}>액션</th>
           </tr>
         </thead>
         <tbody>
           {items.length > 0 ? (
             items.map((item) => (
-              <tr key={item[`${table}_id`]}>
+              <tr key={item[`${table}_id`]} className={styles.tr}>
                 {columns.map(({ key }) => (
-                <td key={key} className="border border-gray-300 p-2">
-                    {key === "start_loc" || key === "end_loc" || key === "path_loc" || key === "loc"
-                    ? parsePoint(String(item[key]))
-                    : String(item[key])}
-                </td>
+                  <td key={key} className={styles.td}>
+                    {["start_loc", "end_loc", "path_loc", "loc"].includes(key)
+                      ? parsePoint(String(item[key]))
+                      : String(item[key])}
+                  </td>
                 ))}
-                <td className="border border-gray-300 p-2 space-x-2">
-                  <Link
-                    href={`/${table}/${item[`${table}_id`]}`}
-                    className="text-blue-600 hover:underline"
-                  >
+                <td className={styles.tdActions}>
+                  <Link href={`/${table}/${item[`${table}_id`]}`} className={styles.editBtn}>
                     수정
                   </Link>
-                  <button
-                    onClick={() => handleDelete(item[`${table}_id`])}
-                    className="text-red-600 hover:underline"
-                  >
+                  <button onClick={() => handleDelete(item[`${table}_id`])} className={styles.deleteBtn}>
                     삭제
                   </button>
                 </td>
@@ -210,7 +212,7 @@ export default function TableListPage() {
             ))
           ) : (
             <tr>
-              <td colSpan={columns.length + 1} className="text-center p-4">
+              <td colSpan={columns.length + 1} className={styles.empty}>
                 데이터가 없습니다.
               </td>
             </tr>

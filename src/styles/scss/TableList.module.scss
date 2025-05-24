@@ -1,0 +1,120 @@
+.container {
+  max-width: 960px;
+  margin: 3.5rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: 0.03em;
+}
+
+.addButton {
+  background-color: #2563eb; // 파란색 (Tailwind blue-600)
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgb(37 99 235 / 0.4);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    background-color: #1e40af; // Tailwind blue-800
+    box-shadow: 0 6px 12px rgb(30 64 175 / 0.6);
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.75rem; // 행 사이에 간격
+
+  thead tr {
+    background-color: #f3f4f6; // Tailwind gray-100
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
+  }
+}
+
+.th, .thAction {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #374151; // Tailwind gray-700
+  user-select: none;
+  border-bottom: 2px solid transparent;
+  vertical-align: middle;
+}
+
+.thAction {
+  text-align: center;
+  width: 120px;
+}
+
+.tr {
+  background-color: white;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.08);
+  border-radius: 12px;
+  transition: background-color 0.25s ease;
+
+  &:hover {
+    background-color: #e0e7ff; // Tailwind indigo-100
+  }
+}
+
+.td {
+  padding: 0.75rem 1rem;
+  border-top: none;
+  vertical-align: middle;
+  color: #4b5563; // Tailwind gray-600
+  font-size: 0.95rem;
+}
+
+.tdActions {
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.editBtn, .deleteBtn {
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 0.95rem;
+  transition: color 0.25s ease;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.editBtn {
+  color: #2563eb;
+}
+
+.deleteBtn {
+  color: #dc2626; // Tailwind red-600
+}
+
+.empty {
+  padding: 2rem 0;
+  text-align: center;
+  color: #9ca3af; // Tailwind gray-400
+  font-style: italic;
+  font-size: 1rem;
+}
