@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import axios from 'axios'
 import axiosInstance from '@/api/axiosInstance'
+import styles from '../styles/scss/Login.module.scss'
 
 export default function LoginPage() {
   console.log('📡 baseURL:', axiosInstance.defaults.baseURL)
@@ -40,22 +41,31 @@ export default function LoginPage() {
 
 
   return (
-    <form onSubmit={handleLogin}>
-  <input
-    type="text"
-    name="id" // name 꼭 지정해줘야 함 일부 브라우저에서 필요함
-    placeholder="아이디"
-    value={id}
-    onChange={(e) => setId(e.target.value)}
-  />
-  <input
-    type="password"
-    name="pw"
-    placeholder="비밀번호"
-    value={pw}
-    onChange={(e) => setPw(e.target.value)}
-  />
-  <button type="submit">로그인</button>
-</form>
+    <div className={styles.container}>
+      <h1 className={styles.title}>관리자 로그인</h1>
+      <form onSubmit={handleLogin} className={styles.form}>
+        <input
+          type="text"
+          name="id"
+          placeholder="아이디"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+          className={styles.input}
+          required
+          autoComplete="username"
+        />
+        <input
+          type="password"
+          name="pw"
+          placeholder="비밀번호"
+          value={pw}
+          onChange={(e) => setPw(e.target.value)}
+          className={styles.input}
+          required
+          autoComplete="current-password"
+        />
+        <button type="submit" className={styles.button}>로그인</button>
+      </form>
+    </div>
   )
 }

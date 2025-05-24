@@ -1,0 +1,56 @@
+.container {
+  max-width: 360px;
+  margin: 6rem auto;
+  padding: 2.5rem 3rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.input {
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1.8px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease;
+  
+  &:focus {
+    border-color: #4f46e5; /* 인디고 */
+    box-shadow: 0 0 8px rgba(79,70,229,0.4);
+  }
+}
+
+.button {
+  padding: 0.85rem 0;
+  background-color: #4f46e5;
+  color: white;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #4338ca;
+  }
+}
