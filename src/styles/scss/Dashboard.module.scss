@@ -1,0 +1,69 @@
+.dashboardContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.dashboardTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 3.5rem;
+  text-align: center;
+}
+
+.cardsWrapper {
+  overflow-x: visible;
+}
+
+.cardsContainer {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.card {
+  flex-shrink: 0;
+  width: 200px;
+  height: 240px;
+  border-radius: 1rem;
+  background-color: #5f736e; 
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.6);
+  }
+
+  .cardIcon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+  }
+
+  .cardLabel {
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-transform: capitalize;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .cardDesc {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0 1rem;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  }
+}
