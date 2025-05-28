@@ -75,7 +75,7 @@ export default function DynamicEditPage() {
       const payload = buildPayload(table, formData)
       await crudRequest({ table, action: 'create', data: payload })
       alert('등록 성공')
-      router.push(/${table})
+      router.push(`/${table}`)
     } catch (err) {
       alert('등록 실패')
       console.error(err)
