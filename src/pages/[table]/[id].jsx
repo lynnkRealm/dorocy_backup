@@ -23,6 +23,22 @@ const ALL_COLUMNS_BY_TABLE = {
   refresh_token: ['refresh_token_id', 'principal_type', 'principal_id', 'refresh_token', 'revoked', 'expires_at'],
 }
 
+const PRIMARY_KEY_BY_TABLE = {
+  user: 'user_id',
+  admin: 'admin_id',
+  favorite_place: 'id',
+  navigation: 'navigation_id',
+  path: 'path_id',
+  guide: 'guide_id',
+  road_section: 'road_id',
+  outbreak: 'outbreak_id',
+  caution: 'caution_id',
+  dincident: 'dincident_id',
+  vsl: 'vsl_id',
+  refresh_token: 'refresh_token_id',
+  road_info: null
+}
+
 const getNow = () => new Date().toISOString().replace('T', ' ').replace('Z', '')
 
 export default function DynamicEditPage() {
@@ -33,21 +49,17 @@ export default function DynamicEditPage() {
 
   const tableName = Array.isArray(table) ? table[0] : table
   const allColumns = tableName && ALL_COLUMNS_BY_TABLE[tableName] ? ALL_COLUMNS_BY_TABLE[tableName] : []
-
-  let primaryKey = `${tableName}_id`
-  if (tableName === 'road_info') primaryKey = null
-  if (tableName === 'dincident') primaryKey = 'dincident_id'
-
+  const primaryKey = PRIMARY_KEY_BY_TABLE[tableName]
   const visibleColumns = primaryKey ? allColumns.filter(col => col !== primaryKey) : allColumns
 
   useEffect(() => {
-    if (!tableName || !id || !primaryKey) return
+    if (!tableName) return
     const fetchItem = async () => {
       try {
         const res = await crudRequest({
           table: tableName,
           action: 'read',
-          filter: { [primaryKey]: Number(id) },
+          ...(primaryKey ? { filter: { [primaryKey]: Number(id) } } : {})
         })
         if (res.length > 0) {
           setFormData(res[0])
@@ -59,7 +71,7 @@ export default function DynamicEditPage() {
       }
     }
     fetchItem()
-  }, [tableName, id, primaryKey])
+  }, [tableName, id])
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -70,20 +82,12 @@ export default function DynamicEditPage() {
     const now = getNow()
     const payload = { ...formData, updated_at: now }
     try {
-      if (primaryKey) {
-        await crudRequest({
-          table: tableName,
-          action: 'update',
-          filter: { [primaryKey]: Number(id) },
-          data: payload
-        })
-      } else {
-        await crudRequest({
-          table: tableName,
-          action: 'update',
-          data: payload
-        })
-      }
+      await crudRequest({
+        table: tableName,
+        action: 'update',
+        ...(primaryKey ? { filter: { [primaryKey]: Number(id) } } : {}),
+        data: payload
+      })
       alert('수정 성공')
       router.push(`/${tableName}`)
     } catch (err) {
