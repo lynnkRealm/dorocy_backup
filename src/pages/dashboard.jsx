@@ -48,8 +48,7 @@ export default function Dashboard() {
     setPrincipalType(payload.principal_type);
   }, [router]);
 
-  const handleLogout = async () => {
-  const router = useRouter();
+ const handleLogout = async () => {
   const token = localStorage.getItem('token');
 
   if (!token) {
@@ -60,7 +59,7 @@ export default function Dashboard() {
 
   try {
     await axios.post(
-      '/auth/logout',
+      'https://cned.fly.dev/auth/logout',
       {},
       {
         headers: {
@@ -76,6 +75,7 @@ export default function Dashboard() {
     alert('로그아웃 중 오류가 발생했습니다.');
   }
 };
+
 
   if (!principalType) return <p>로딩 중...</p>;
 
