@@ -53,48 +53,75 @@ export default function DynamicEditPage() {
   const visibleColumns = primaryKey ? allColumns.filter(col => col !== primaryKey) : allColumns
 
   useEffect(() => {
-    if (!tableName) return
-    const fetchItem = async () => {
-      try {
-        const res = await crudRequest({
-          table: tableName,
-          action: 'read',
-          ...(primaryKey ? { filter: { [primaryKey]: Number(id) } } : {})
-        })
-        if (res.length > 0) {
-          setFormData(res[0])
+  if (!tableName) return;
+
+  const fetchItem = async () => {
+    try {
+      let filter = {};
+      if (primaryKey && id) {
+        filter = { [primaryKey]: Number(id) };
+      } else if (tableName === 'road_info') {
+        // URL에 route_no, road_no가 있을 경우
+        const { route_no, road_no } = router.query;
+        if (route_no && road_no) {
+          filter = { route_no, road_no };
         }
-      } catch (err) {
-        alert('데이터 로드 실패')
-      } finally {
-        setLoading(false)
       }
+
+      const res = await crudRequest({
+        table: tableName,
+        action: 'read',
+        ...(Object.keys(filter).length ? { filter } : {})
+      });
+
+      if (res.length > 0) {
+        setFormData(res[0]);
+      }
+    } catch (err) {
+      alert('데이터 로드 실패');
+    } finally {
+      setLoading(false);
     }
-    fetchItem()
-  }, [tableName, id])
+  };
+
+  fetchItem();
+}, [tableName, id, router.query]);
+
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const now = getNow()
-    const payload = { ...formData, updated_at: now }
-    try {
-      await crudRequest({
-        table: tableName,
-        action: 'update',
-        ...(primaryKey ? { filter: { [primaryKey]: Number(id) } } : {}),
-        data: payload
-      })
-      alert('수정 성공')
-      router.push(`/${tableName}`)
-    } catch (err) {
-      alert('수정 실패')
-      console.error(err)
+  e.preventDefault();
+  const now = getNow();
+  const payload = { ...formData, updated_at: now };
+
+  let filter = {};
+  if (primaryKey && id) {
+    filter = { [primaryKey]: Number(id) };
+  } else if (tableName === 'road_info') {
+    const { route_no, road_no } = router.query;
+    if (route_no && road_no) {
+      filter = { route_no, road_no };
     }
   }
+
+  try {
+    await crudRequest({
+      table: tableName,
+      action: 'update',
+      ...(Object.keys(filter).length ? { filter } : {}),
+      data: payload
+    });
+    alert('수정 성공');
+    router.push(`/${tableName}`);
+  } catch (err) {
+    alert('수정 실패');
+    console.error(err);
+  }
+};
+
 
   if (loading) return <div>로딩 중...</div>
   if (!tableName || (!id && primaryKey)) return <div>잘못된 접근입니다.</div>
