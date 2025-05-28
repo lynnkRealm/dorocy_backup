@@ -10,24 +10,27 @@ export default function DynamicEditPage() {
   const [formData, setFormData] = useState({})
 
   useEffect(() => {
-    const fetchColumns = async () => {
-      if (!table) return
-      try {
-        const res = await crudRequest({
-          table,
-          action: 'read',
-          filter: {},
-        })
-        if (res.data && res.data.length > 0) {
-          const keys = Object.keys(res.data[0])
-          setAllColumns(keys)
-        }
-      } catch (err) {
-        console.error('컬럼 조회 실패', err)
+  const fetchColumns = async () => {
+    if (!router.isReady || !table) return
+    try {
+      const res = await crudRequest({
+        table,
+        action: 'read',
+        filter: {},
+      })
+      if (res.data && res.data.length > 0) {
+        const keys = Object.keys(res.data[0])
+        setAllColumns(keys)
+      } else {
+        alert(`${table} 테이블에 샘플 데이터가 없어 컬럼 추론이 어렵습니다.`)
       }
+    } catch (err) {
+      console.error('컬럼 조회 실패', err)
     }
-    fetchColumns()
-  }, [table])
+  }
+  fetchColumns()
+}, [router.isReady, table])
+
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
