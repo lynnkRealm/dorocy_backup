@@ -59,7 +59,7 @@ export default function Dashboard() {
 
   try {
     await axios.post(
-      'https://cned.fly.dev/auth/logout',
+      '/auth/logout',
       {},
       {
         headers: {
