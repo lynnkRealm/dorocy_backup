@@ -1,7 +1,12 @@
+// Dashboard.jsx
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from "next/link";
-import { FaUser, FaMapMarkerAlt, FaRoute, FaRoad, FaListAlt, FaClipboardList, FaUserShield, FaExclamationTriangle, FaBell, FaSkullCrossbones, FaCar, FaInfoCircle } from "react-icons/fa";
+import {
+  FaUser, FaMapMarkerAlt, FaRoute, FaRoad, FaListAlt, FaClipboardList,
+  FaUserShield, FaExclamationTriangle, FaBell, FaSkullCrossbones, FaCar, FaInfoCircle
+} from "react-icons/fa";
 import styles from "../styles/scss/Dashboard.module.scss";
 import { parseJwt } from '@/utils/jwt';
 
@@ -23,8 +28,7 @@ const tables = [
 const TABLES_BY_TYPE = {
   ROAD: ['outbreak', 'vsl', 'dincident', 'caution', 'road_info'],
   SERVICE: ['user', 'admin', 'road_section', 'navigation', 'path', 'guide'],
-  _ADMIN: ['user', 'admin'], // 필요하면 추가
-}
+};
 
 export default function Dashboard() {
   const router = useRouter();
@@ -44,17 +48,28 @@ export default function Dashboard() {
     setPrincipalType(payload.principal_type);
   }, [router]);
 
-  if (!principalType) {
-    return <p>로딩 중...</p>;
-  }
+  const handleLogout = async () => {
+    try {
+      await axios.get('https://cned.fly.dev/auth/logout');
+      localStorage.clear();
+      router.replace('/login');
+    } catch (err) {
+      console.error('로그아웃 실패', err);
+      alert('로그아웃에 실패했습니다.');
+    }
+  };
 
-  // principal_type에 맞는 허용 테이블만 필터링
+  if (!principalType) return <p>로딩 중...</p>;
+
   const allowedKeys = TABLES_BY_TYPE[principalType] || [];
   const filteredTables = tables.filter(table => allowedKeys.includes(table.key));
 
   return (
     <div className={styles.dashboardContainer}>
-      <h1 className={styles.dashboardTitle}>관리자 대시보드</h1>
+      <div className={styles.header}>
+        <h1 className={styles.dashboardTitle}>관리자 대시보드</h1>
+        <button onClick={handleLogout} className={styles.logoutBtn}>로그아웃</button>
+      </div>
 
       <div className={styles.cardsWrapper}>
         <div className={styles.cardsContainer}>
@@ -67,9 +82,7 @@ export default function Dashboard() {
               >
                 <Icon className={styles.cardIcon} />
                 <div className={styles.cardLabel}>{label.replace(/_/g, " ")}</div>
-                <p className={styles.cardDesc}>
-                  {`Manage the ${label.replace(/_/g, " ")}`}
-                </p>
+                <p className={styles.cardDesc}>Manage the {label.replace(/_/g, " ")}</p>
               </Link>
             ))
           ) : (
