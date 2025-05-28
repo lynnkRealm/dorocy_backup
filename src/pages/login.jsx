@@ -32,7 +32,7 @@ export default function LoginPage() {
     )
     console.log('✅ login success:', data)
     localStorage.setItem('token', data.access_token)
-    router.replace('/user')
+    router.replace('/dashboard')
   } catch (err) {
     console.error('❌ login error:', err)
     alert('로그인 실패')
