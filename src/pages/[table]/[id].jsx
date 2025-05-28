@@ -36,14 +36,14 @@ const PRIMARY_KEY_BY_TABLE = {
   dincident: 'dincident_id',
   vsl: 'vsl_id',
   refresh_token: 'refresh_token_id',
-  road_info: null
+  road_info: null,
 }
 
 const getNow = () => new Date().toISOString().replace('T', ' ').replace('Z', '')
 
 export default function DynamicEditPage() {
   const router = useRouter()
-  const { table, id } = router.query
+  const { table, id, route_no, road_no } = router.query
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(true)
 
@@ -53,78 +53,71 @@ export default function DynamicEditPage() {
   const visibleColumns = primaryKey ? allColumns.filter(col => col !== primaryKey) : allColumns
 
   useEffect(() => {
-  if (!tableName) return;
+    if (!tableName) return
+    if (primaryKey && !id) return
+    if (tableName === 'road_info' && (!route_no || !road_no)) return
 
-  const fetchItem = async () => {
-    try {
-      let filter = {};
-      if (primaryKey && id) {
-        filter = { [primaryKey]: Number(id) };
-      } else if (tableName === 'road_info') {
-        // URL에 route_no, road_no가 있을 경우
-        const { route_no, road_no } = router.query;
-        if (route_no && road_no) {
-          filter = { route_no, road_no };
+    const fetchItem = async () => {
+      try {
+        let filter = {}
+        if (primaryKey && id) {
+          filter = { [primaryKey]: Number(id) }
+        } else if (tableName === 'road_info') {
+          filter = { route_no, road_no }
         }
-      }
 
-      const res = await crudRequest({
-        table: tableName,
-        action: 'read',
-        ...(Object.keys(filter).length ? { filter } : {})
-      });
+        const res = await crudRequest({
+          table: tableName,
+          action: 'read',
+          ...(Object.keys(filter).length ? { filter } : {})
+        })
 
-      if (res.length > 0) {
-        setFormData(res[0]);
+        if (res.length > 0) {
+          setFormData(res[0])
+        }
+      } catch (err) {
+        alert('데이터 로드 실패')
+      } finally {
+        setLoading(false)
       }
-    } catch (err) {
-      alert('데이터 로드 실패');
-    } finally {
-      setLoading(false);
     }
-  };
 
-  fetchItem();
-}, [tableName, id, router.query]);
-
+    fetchItem()
+  }, [tableName, id, route_no, road_no])
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  const now = getNow();
-  const payload = { ...formData, updated_at: now };
+    e.preventDefault()
+    const now = getNow()
+    const payload = { ...formData, updated_at: now }
 
-  let filter = {};
-  if (primaryKey && id) {
-    filter = { [primaryKey]: Number(id) };
-  } else if (tableName === 'road_info') {
-    const { route_no, road_no } = router.query;
-    if (route_no && road_no) {
-      filter = { route_no, road_no };
+    let filter = {}
+    if (primaryKey && id) {
+      filter = { [primaryKey]: Number(id) }
+    } else if (tableName === 'road_info') {
+      filter = { route_no, road_no }
+    }
+
+    try {
+      await crudRequest({
+        table: tableName,
+        action: 'update',
+        ...(Object.keys(filter).length ? { filter } : {}),
+        data: payload
+      })
+      alert('수정 성공')
+      router.push(`/${tableName}`)
+    } catch (err) {
+      alert('수정 실패')
+      console.error(err)
     }
   }
 
-  try {
-    await crudRequest({
-      table: tableName,
-      action: 'update',
-      ...(Object.keys(filter).length ? { filter } : {}),
-      data: payload
-    });
-    alert('수정 성공');
-    router.push(`/${tableName}`);
-  } catch (err) {
-    alert('수정 실패');
-    console.error(err);
-  }
-};
-
-
   if (loading) return <div>로딩 중...</div>
-  if (!tableName || (!id && primaryKey)) return <div>잘못된 접근입니다.</div>
+  if (!tableName || (primaryKey && !id)) return <div>잘못된 접근입니다.</div>
 
   return (
     <div className={styles.container}>
