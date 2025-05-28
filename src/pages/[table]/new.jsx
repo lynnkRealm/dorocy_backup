@@ -20,6 +20,7 @@ export default function DynamicEditPage() {
         action: 'read',
         filter: {},
       })
+      console.log("res",res)
 
       const rows = res.data?.data
       if (Array.isArray(rows) && rows.length > 0) {
