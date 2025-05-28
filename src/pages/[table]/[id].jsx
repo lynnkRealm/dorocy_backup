@@ -33,11 +33,15 @@ export default function DynamicEditPage() {
 
   const tableName = Array.isArray(table) ? table[0] : table
   const allColumns = tableName && ALL_COLUMNS_BY_TABLE[tableName] ? ALL_COLUMNS_BY_TABLE[tableName] : []
-  const primaryKey = `${tableName}_id`
-  const visibleColumns = allColumns.filter(col => col !== primaryKey)
+
+  let primaryKey = `${tableName}_id`
+  if (tableName === 'road_info') primaryKey = null
+  if (tableName === 'dincident') primaryKey = 'dincident_id'
+
+  const visibleColumns = primaryKey ? allColumns.filter(col => col !== primaryKey) : allColumns
 
   useEffect(() => {
-    if (!tableName || !id) return
+    if (!tableName || !id || !primaryKey) return
     const fetchItem = async () => {
       try {
         const res = await crudRequest({
@@ -55,7 +59,7 @@ export default function DynamicEditPage() {
       }
     }
     fetchItem()
-  }, [tableName, id])
+  }, [tableName, id, primaryKey])
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -66,12 +70,20 @@ export default function DynamicEditPage() {
     const now = getNow()
     const payload = { ...formData, updated_at: now }
     try {
-      await crudRequest({
-        table: tableName,
-        action: 'update',
-        filter: { [primaryKey]: Number(id) },
-        data: payload
-      })
+      if (primaryKey) {
+        await crudRequest({
+          table: tableName,
+          action: 'update',
+          filter: { [primaryKey]: Number(id) },
+          data: payload
+        })
+      } else {
+        await crudRequest({
+          table: tableName,
+          action: 'update',
+          data: payload
+        })
+      }
       alert('수정 성공')
       router.push(`/${tableName}`)
     } catch (err) {
@@ -81,7 +93,7 @@ export default function DynamicEditPage() {
   }
 
   if (loading) return <div>로딩 중...</div>
-  if (!tableName || !id) return <div>잘못된 접근입니다.</div>
+  if (!tableName || (!id && primaryKey)) return <div>잘못된 접근입니다.</div>
 
   return (
     <div className={styles.container}>
