@@ -1,0 +1,8 @@
+노면장애 = db에 저장
+mysql://root:pPXxCUnshhOtHcgmhntELvEaKojuFcoU@nozomi.proxy.rlwy.net:17097/railway
+
+밤이 되어도 방향을 잃지 않도록 조용히 밝혀주는 야간 전환 도구
+
+ mysql -h nozomi.proxy.rlwy.net -P 17097 -u root -p
+
+ALTER TABLE user ALTER COLUMN naver_auth SET DEFAULT 0;
