@@ -107,8 +107,8 @@ export default function DynamicEditPage() {
           action: 'read',
           filter: { [`${table}_id`]: Number(id) },
         })
-        if (res?.data?.length > 0) {
-          setFormData(res.data[0])
+        if (res.length > 0) {
+          setFormData(res[0])
         }
       } catch (err) {
         alert('데이터 로드 실패')
@@ -127,7 +127,12 @@ export default function DynamicEditPage() {
     e.preventDefault()
     try {
       const now = new Date().toISOString()
-      let submitData = { ...formData, updated_at: now }
+      let submitData = { ...formData }
+
+      if (id) {
+        // 수정 시 updated_at 만 현재 시간으로 갱신
+        submitData.updated_at = now
+      }   
 
       await crudRequest({
         table,
@@ -146,6 +151,7 @@ export default function DynamicEditPage() {
   if (loading) return <div>로딩 중...</div>
   if (!table || !id) return <div>잘못된 접근입니다.</div>
 
+  // 컬럼이 정의되어 있으면 TABLE_COLUMNS 기준으로, 없으면 formData 전체 키 기준으로
   const columns = (table && TABLE_COLUMNS[table]) 
     ? TABLE_COLUMNS[table] 
     : Object.keys(formData).map(key => ({ key, label: key }))
@@ -176,5 +182,6 @@ export default function DynamicEditPage() {
         </button>
       </form>
     </div>
+
   )
 }
