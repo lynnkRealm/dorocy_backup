@@ -36,7 +36,7 @@ const PRIMARY_KEY_BY_TABLE = {
   dincident: 'dincident_id',
   vsl: 'vsl_id',
   refresh_token: 'refresh_token_id',
-  road_info: null,
+  road_info: null, // 복합키 처리
 }
 
 const getNow = () => new Date().toISOString().replace('T', ' ').replace('Z', '')
@@ -54,16 +54,13 @@ export default function DynamicEditPage() {
 
   useEffect(() => {
     if (!router.isReady) return
-    if (!tableName) return
-    if (primaryKey && !id) return
-    if (tableName === 'road_info' && (!route_no || !road_no)) return
 
     const fetchItem = async () => {
       try {
         let filter = {}
         if (primaryKey && id) {
           filter = { [primaryKey]: Number(id) }
-        } else if (tableName === 'road_info') {
+        } else if (tableName === 'road_info' && route_no && road_no) {
           filter = { route_no, road_no }
         }
 
@@ -75,16 +72,19 @@ export default function DynamicEditPage() {
 
         if (res.length > 0) {
           setFormData(res[0])
+        } else {
+          alert('데이터가 없습니다')
         }
       } catch (err) {
         alert('데이터 로드 실패')
+        console.error(err)
       } finally {
         setLoading(false)
       }
     }
 
     fetchItem()
-  }, [router.isReady, tableName, id, route_no, road_no])
+  }, [router.isReady])
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -98,7 +98,7 @@ export default function DynamicEditPage() {
     let filter = {}
     if (primaryKey && id) {
       filter = { [primaryKey]: Number(id) }
-    } else if (tableName === 'road_info') {
+    } else if (tableName === 'road_info' && route_no && road_no) {
       filter = { route_no, road_no }
     }
 
@@ -117,9 +117,10 @@ export default function DynamicEditPage() {
     }
   }
 
-  if (!router.isReady || loading) return <div>로딩 중...</div>
-  if (!tableName || (primaryKey && !id) || (tableName === 'road_info' && (!route_no || !road_no)))
+  if (loading) return <div>로딩 중...</div>
+  if (!tableName || (primaryKey && !id) || (tableName === 'road_info' && (!route_no || !road_no))) {
     return <div>잘못된 접근입니다.</div>
+  }
 
   return (
     <div className={styles.container}>
