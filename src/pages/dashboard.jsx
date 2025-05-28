@@ -49,15 +49,33 @@ export default function Dashboard() {
   }, [router]);
 
   const handleLogout = async () => {
-    try {
-      await axios.get('https://cned.fly.dev/auth/logout');
-      localStorage.clear();
-      router.replace('/login');
-    } catch (err) {
-      console.error('로그아웃 실패', err);
-      alert('로그아웃에 실패했습니다.');
-    }
-  };
+  const router = useRouter();
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    alert('이미 로그아웃 상태입니다.');
+    router.replace('/login');
+    return;
+  }
+
+  try {
+    await axios.post(
+      '/auth/logout',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    localStorage.clear();
+    router.replace('/login');
+  } catch (error) {
+    console.error('로그아웃 실패:', error);
+    alert('로그아웃 중 오류가 발생했습니다.');
+  }
+};
 
   if (!principalType) return <p>로딩 중...</p>;
 
