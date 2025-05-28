@@ -117,7 +117,9 @@ export default function DynamicEditPage() {
   }
 
   if (loading) return <div>로딩 중...</div>
-  if (!tableName || (primaryKey && !id)) return <div>잘못된 접근입니다.</div>
+  if (!tableName || (primaryKey && !id) || (tableName === 'road_info' && (!route_no || !road_no)))
+    return <div>잘못된 접근입니다.</div>;
+
 
   return (
     <div className={styles.container}>
