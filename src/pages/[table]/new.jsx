@@ -1,4 +1,3 @@
-나의 말:
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { crudRequest } from '@/api/crud'
