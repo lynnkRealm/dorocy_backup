@@ -21,13 +21,13 @@ export default function DynamicEditPage() {
         filter: {},
       })
 
-      console.log('[DEBUG] table:', normalizedTable)
-      console.log('[DEBUG] res.data:', res.data)
-
-      if (res.data && res.data.length > 0 && res.data[0]) {
-        setAllColumns(Object.keys(res.data[0]))
+      const rows = res.data?.data
+      if (Array.isArray(rows) && rows.length > 0) {
+        const cols = Object.keys(rows[0])
+        console.log(`📌 ${normalizedTable} 컬럼 목록`, cols)
+        setAllColumns(cols)
       } else {
-        alert(`🚨 ${normalizedTable} 테이블에서 컬럼 추론 실패: 데이터 없음 혹은 1건 이상에 null`)
+        alert(`📭 ${normalizedTable} 테이블에 샘플 데이터 없음`)
       }
     } catch (err) {
       console.error('❌ 컬럼 fetch 실패:', err)
@@ -36,7 +36,6 @@ export default function DynamicEditPage() {
 
   fetchColumns()
 }, [router.isReady, table])
-
 
 
   const handleChange = (e) => {
