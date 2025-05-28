@@ -53,6 +53,7 @@ export default function DynamicEditPage() {
   const visibleColumns = primaryKey ? allColumns.filter(col => col !== primaryKey) : allColumns
 
   useEffect(() => {
+    if (!router.isReady) return
     if (!tableName) return
     if (primaryKey && !id) return
     if (tableName === 'road_info' && (!route_no || !road_no)) return
@@ -83,7 +84,7 @@ export default function DynamicEditPage() {
     }
 
     fetchItem()
-  }, [tableName, id, route_no, road_no])
+  }, [router.isReady, tableName, id, route_no, road_no])
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -116,10 +117,9 @@ export default function DynamicEditPage() {
     }
   }
 
-  if (loading) return <div>로딩 중...</div>
+  if (!router.isReady || loading) return <div>로딩 중...</div>
   if (!tableName || (primaryKey && !id) || (tableName === 'road_info' && (!route_no || !road_no)))
-    return <div>잘못된 접근입니다.</div>;
-
+    return <div>잘못된 접근입니다.</div>
 
   return (
     <div className={styles.container}>
