@@ -24,46 +24,16 @@ const ALL_COLUMNS_BY_TABLE = {
 }
 
 const getNow = () => new Date().toISOString().replace('T', ' ').replace('Z', '')
-const DEFAULT_VALUES = {
-  password: '',
-  profile_img: '',
-  naver_auth: 0,
-  created_at: getNow,
-  updated_at: getNow,
-  fuelprice: 0,
-  taxifare: 0,
-  tollfare: 0,
-  cur_speed_limit: 50,
-  default_speed_limit: 80,
-  registed_date: getNow,
-  route_name: '',
-  route_no: '',
-  revoked: 0
-}
-
-const buildPayload = (table, formData) => {
-  const columns = ALL_COLUMNS_BY_TABLE[table] || []
-  const payload = {}
-  for (const col of columns) {
-    if (formData[col] !== undefined) {
-      payload[col] = formData[col]
-    } else if (typeof DEFAULT_VALUES[col] === 'function') {
-      payload[col] = DEFAULT_VALUES[col]()
-    } else if (col in DEFAULT_VALUES) {
-      payload[col] = DEFAULT_VALUES[col]
-    } else {
-      payload[col] = null
-    }
-  }
-  return payload
-}
 
 export default function DynamicEditPage() {
   const router = useRouter()
   const { table } = router.query
   const [formData, setFormData] = useState({})
 
-  const allColumns = table && ALL_COLUMNS_BY_TABLE[table] ? ALL_COLUMNS_BY_TABLE[table] : []
+  const tableName = Array.isArray(table) ? table[0] : table
+  const allColumns = tableName && ALL_COLUMNS_BY_TABLE[tableName] ? ALL_COLUMNS_BY_TABLE[tableName] : []
+  const primaryKey = `${tableName}_id`
+  const visibleColumns = allColumns.filter(col => col !== primaryKey)
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -71,24 +41,29 @@ export default function DynamicEditPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const now = getNow()
+    const payload = {
+      ...formData,
+      created_at: now,
+      updated_at: now,
+    }
     try {
-      const payload = buildPayload(table, formData)
-      await crudRequest({ table, action: 'create', data: payload })
+      await crudRequest({ table: tableName, action: 'create', data: payload })
       alert('등록 성공')
-      router.push(`/${table}`)
+      router.push(`/${tableName}`)
     } catch (err) {
       alert('등록 실패')
       console.error(err)
     }
   }
 
-  if (!table) return <div>Loading...</div>
+  if (!tableName) return <div>Loading...</div>
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>{table.toUpperCase()} 전체 필드 등록</h1>
+      <h1 className={styles.title}>{tableName.toUpperCase()} 전체 필드 등록</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
-        {allColumns.map((key) => (
+        {visibleColumns.map((key) => (
           <div key={key} className={styles.field}>
             <label htmlFor={key} className={styles.label}>{key}</label>
             <input
@@ -107,4 +82,4 @@ export default function DynamicEditPage() {
       </form>
     </div>
   )
-}  
+}
