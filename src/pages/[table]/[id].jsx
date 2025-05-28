@@ -1,111 +1,49 @@
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { crudRequest } from '@/api/crud'
-import styles from '../../styles/scss/DynamicEditForm.module.scss'
+import styles from '../../styles/scss/DynamicForm.module.scss'
 
-const TABLE_COLUMNS = {
-  user: [
-    { key: "name", label: "이름" },
-    { key: "email", label: "이메일" },
-    { key : "naver_auth", label: "네이버 연동"},
+const ALL_COLUMNS_BY_TABLE = {
+  user: ['user_id', 'name', 'email', 'password', 'naver_auth'],
+  admin: ['admin_id', 'admin_type', 'email', 'password', 'name', 'profile_img'],
+  favorite_place: ['id', 'user_id', 'loc', 'name', 'addr'],
+  navigation: [
+    'navigation_id', 'start_loc', 'end_loc', 'arrival_time', 'road_option',
+    'total_distance', 'total_time', 'taxifare', 'tollfare', 'fuelprice',
+    'principal_type', 'principal_id'
   ],
-  favorite_place : [
-    { key: "user_id", label: "User ID" },
-    { key: "name", label: "장소 별칭" },
-    { key: "addr", label: "주소" },
-  ],
-  navigation : [
-    { key: "principal_id", label: "동적 id" },
-    { key: "principal_type", label: "동적 type" },
-    { key: "start_loc", label: "출발지" },
-    { key: "end_loc", label: "도착지" },
-    { key: "road_option", label: "경로 옵션" },
-    { key: "total_distance", label: "전체 거리" },
-    { key: "total_time", label: "전체 소요 시간" },
-    { key: "taxifare", label: "예상 비용" },
-    { key: "tollfare", label: "톨게이트 비용" },
-    { key: "fuelprice", label: "주유비" },
-  ],
-  path : [
-    { key: "navigation_id", label: "Navigation ID" },
-    { key: "path_loc", label: "상세 경로 위치(위도,경도)" },
-    { key: "step_order", label: "상세 경로 내 순서" },
-  ],
-  road_section : [
-    { key: "navigation_id", label: "Navigation ID" },
-    { key: "distance", label: "거리" },
-    { key: "name", label: "도로 이름" },
-    { key: "congestion", label: "혼잡도" },
-  ],
-  guide: [
-    { key: "navigation_id", label: "Navigation ID" },
-    { key: "instructions", label: "안내" },
-    { key: "step_order", label: "상세 경로 내 순서" },
-  ],
-  admin: [
-  { key: "admin_type", label: "관리자 타입" },
-  { key: "email", label: "이메일" },
-  { key: "passwd", label: "비밀번호" },
-  { key: "name", label: "이름" },
-],
-  outbreak: [
-    { key: "navigation_id", label: "Navigation ID" },
-    { key: "principal_id", label: "동적 id" },
-    { key: "principal_type", label: "동적 type" },
-    { key: "event_type", label: "이벤트 종류" },
-    { key: "period", label: "기간" },
-    { key: "road_name", label: "도로 이름" },
-    { key: "message", label: "메시지" },
-    { key: "loc", label: "위치 (POINT)" },
-    { key: "road_no", label: "도로 번호" },
-],
-  caution: [
-  { key: "navigation_id", label: "Navigation ID" },
-  { key: "principal_id", label: "동적 id" },
-  { key: "principal_type", label: "동적 type" },
-  { key: "message", label: "메시지" },
-  { key: "loc", label: "위치 (LINESTRING)" },
-  { key: "route_no", label: "루트 번호" },
-  { key: "route_name", label: "루트 이름" },
-],
-  dangerous_incident: [
-  { key: "navigation_id", label: "Navigation ID" },
-  { key: "principal_id", label: "동적 id" },
-  { key: "principal_type", label: "동적 type" },
-  { key: "loc", label: "위치 (POINT)" },
-  { key: "period", label: "기간" },
-],
-  vsl: [
-  { key: "vsl_name", label: "VSL 이름" },
-  { key: "principal_id", label: "동적 id" },
-  { key: "principal_type", label: "동적 type" },
-  { key: "loc", label: "위치 (POINT)" },
-  { key: "road_no", label: "도로 번호" },
-  { key: "default_speed_limit", label: "기본 속도 제한" },
-  { key: "cur_speed_limit", label: "현재 속도 제한" },
-  { key: "registed_date", label: "등록 날짜" },
-  { key: "principal_type", label: "주체 타입" },
-],
-  road_info: [
-  { key: "route_no", label: "루트 번호" },
-  { key: "road_no", label: "도로 번호" },
-  { key: "route_name", label: "루트 이름" },
-]
+  path: ['path_id', 'navigation_id', 'path_loc', 'step_order', 'pathidx'],
+  guide: ['guide_id', 'navigation_id', 'distance', 'duration', 'instructions', 'pointidx', 'step_order'],
+  road_section: ['road_id', 'navigation_id', 'name', 'distance', 'speed', 'congestion', 'pointidx', 'pointcount'],
+  road_info: ['route_no', 'road_no', 'route_name'],
+  outbreak: ['outbreak_id', 'navigation_id', 'principal_id', 'principal_type', 'event_type', 'period', 'road_name', 'message', 'loc', 'road_no'],
+  caution: ['caution_id', 'navigation_id', 'principal_id', 'principal_type', 'message', 'loc', 'route_no', 'route_name'],
+  dangerous_incident: ['dincident_id', 'navigation_id', 'principal_id', 'principal_type', 'loc', 'period'],
+  vsl: ['vsl_id', 'navigation_id', 'principal_id', 'principal_type', 'vsl_name', 'loc', 'registed_date', 'road_no', 'default_speed_limit', 'cur_speed_limit'],
+  refresh_token: ['refresh_token_id', 'principal_type', 'principal_id', 'refresh_token', 'revoked', 'expires_at'],
 }
+
+const getNow = () => new Date().toISOString().replace('T', ' ').replace('Z', '')
+
 export default function DynamicEditPage() {
   const router = useRouter()
   const { table, id } = router.query
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(true)
 
+  const tableName = Array.isArray(table) ? table[0] : table
+  const allColumns = tableName && ALL_COLUMNS_BY_TABLE[tableName] ? ALL_COLUMNS_BY_TABLE[tableName] : []
+  const primaryKey = `${tableName}_id`
+  const visibleColumns = allColumns.filter(col => col !== primaryKey)
+
   useEffect(() => {
-    if (!table || !id) return
+    if (!tableName || !id) return
     const fetchItem = async () => {
       try {
         const res = await crudRequest({
-          table,
+          table: tableName,
           action: 'read',
-          filter: { [`${table}_id`]: Number(id) },
+          filter: { [primaryKey]: Number(id) },
         })
         if (res.length > 0) {
           setFormData(res[0])
@@ -117,7 +55,7 @@ export default function DynamicEditPage() {
       }
     }
     fetchItem()
-  }, [table, id])
+  }, [tableName, id])
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -125,23 +63,17 @@ export default function DynamicEditPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const now = getNow()
+    const payload = { ...formData, updated_at: now }
     try {
-      const now = new Date().toISOString()
-      let submitData = { ...formData }
-
-      if (id) {
-        // 수정 시 updated_at 만 현재 시간으로 갱신
-        submitData.updated_at = now
-      }   
-
       await crudRequest({
-        table,
+        table: tableName,
         action: 'update',
-        filter: { [`${table}_id`]: Number(id) },
-        data: submitData,
+        filter: { [primaryKey]: Number(id) },
+        data: payload
       })
       alert('수정 성공')
-      router.push(`/${table}`)
+      router.push(`/${tableName}`)
     } catch (err) {
       alert('수정 실패')
       console.error(err)
@@ -149,39 +81,29 @@ export default function DynamicEditPage() {
   }
 
   if (loading) return <div>로딩 중...</div>
-  if (!table || !id) return <div>잘못된 접근입니다.</div>
-
-  // 컬럼이 정의되어 있으면 TABLE_COLUMNS 기준으로, 없으면 formData 전체 키 기준으로
-  const columns = (table && TABLE_COLUMNS[table]) 
-    ? TABLE_COLUMNS[table] 
-    : Object.keys(formData).map(key => ({ key, label: key }))
+  if (!tableName || !id) return <div>잘못된 접근입니다.</div>
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>{table.toUpperCase()} 수정</h1>
+      <h1 className={styles.title}>{tableName.toUpperCase()} 수정</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
-        {columns.map(({ key, label }) => (
+        {visibleColumns.map((key) => (
           <div key={key} className={styles.field}>
-            <label htmlFor={key} className={styles.label}>
-              {label}
-            </label>
+            <label htmlFor={key} className={styles.label}>{key}</label>
             <input
               id={key}
               name={key}
               type="text"
               value={formData[key] ?? ''}
               onChange={handleChange}
+              placeholder={key}
               className={styles.input}
-              disabled={key === `${table}_id`}
               autoComplete="off"
             />
           </div>
         ))}
-        <button type="submit" className={styles.submitBtn}>
-          저장
-        </button>
+        <button type="submit" className={styles.submitBtn}>저장</button>
       </form>
     </div>
-
   )
 }
