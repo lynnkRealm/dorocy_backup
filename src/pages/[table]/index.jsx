@@ -95,7 +95,7 @@ const tableColumns = {
   { key: "created_at", label: "생성일" },
   { key: "updated_at", label: "업데이트 날짜" },
 ],
-  dangerous_incident: [
+  dincident: [
   { key: "dincident_id", label: "ID" },
   { key: "navigation_id", label: "Navigation ID" },
   { key: "principal_id", label: "동적 id" },

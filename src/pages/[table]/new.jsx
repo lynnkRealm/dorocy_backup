@@ -18,7 +18,7 @@ const ALL_COLUMNS_BY_TABLE = {
   road_info: ['route_no', 'road_no', 'route_name'],
   outbreak: ['outbreak_id', 'navigation_id', 'principal_id', 'principal_type', 'event_type', 'period', 'road_name', 'message', 'loc', 'road_no'],
   caution: ['caution_id', 'navigation_id', 'principal_id', 'principal_type', 'message', 'loc', 'route_no', 'route_name'],
-  dangerous_incident: ['dincident_id', 'navigation_id', 'principal_id', 'principal_type', 'loc', 'period'],
+  dincident: ['dincident_id', 'navigation_id', 'principal_id', 'principal_type', 'loc', 'period'],
   vsl: ['vsl_id', 'navigation_id', 'principal_id', 'principal_type', 'vsl_name', 'loc', 'registed_date', 'road_no', 'default_speed_limit', 'cur_speed_limit'],
   refresh_token: ['refresh_token_id', 'principal_type', 'principal_id', 'refresh_token', 'revoked', 'expires_at'],
 }
