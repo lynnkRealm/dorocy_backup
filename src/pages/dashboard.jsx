@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import styles from "../styles/scss/Dashboard.module.scss";
 import { parseJwt } from '@/utils/jwt';
+import axiosInstance from '@/api/axiosInstance';
 
 const tables = [
   { key: "user", label: "User", icon: FaUser, color: "bg-blue-100", textColor: "text-blue-800" },
@@ -58,7 +59,7 @@ export default function Dashboard() {
   }
 
   try {
-    await axios.post(
+    const res = await axiosInstance.post(
       '/auth/logout',
       {},
       {
@@ -68,6 +69,7 @@ export default function Dashboard() {
       }
     );
 
+    console.log(res.data)
     localStorage.clear();
     router.replace('/login');
   } catch (error) {
