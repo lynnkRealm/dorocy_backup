@@ -11,25 +11,32 @@ export default function DynamicEditPage() {
 
   useEffect(() => {
   const fetchColumns = async () => {
-    if (!router.isReady || !table) return
+    const normalizedTable = Array.isArray(table) ? table[0] : table;
+    if (!router.isReady || !normalizedTable) return;
+
     try {
       const res = await crudRequest({
-        table,
+        table: normalizedTable,
         action: 'read',
         filter: {},
       })
-      if (res.data && res.data.length > 0) {
-        const keys = Object.keys(res.data[0])
-        setAllColumns(keys)
+
+      console.log('[DEBUG] table:', normalizedTable)
+      console.log('[DEBUG] res.data:', res.data)
+
+      if (res.data && res.data.length > 0 && res.data[0]) {
+        setAllColumns(Object.keys(res.data[0]))
       } else {
-        alert(`${table} 테이블에 샘플 데이터가 없어 컬럼 추론이 어렵습니다.`)
+        alert(`🚨 ${normalizedTable} 테이블에서 컬럼 추론 실패: 데이터 없음 혹은 1건 이상에 null`)
       }
     } catch (err) {
-      console.error('컬럼 조회 실패', err)
+      console.error('❌ 컬럼 fetch 실패:', err)
     }
   }
+
   fetchColumns()
 }, [router.isReady, table])
+
 
 
   const handleChange = (e) => {
